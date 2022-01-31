@@ -1,7 +1,7 @@
 # Fast Link Extractor
 ### Project under active deveopment, not production ready
 
-A Python 3.6+ package to extract links from a webpage. Asyncronous functions allows the code to run fast when extracting from many sub-directories.
+A Python 3.7+ package to extract links from a webpage. Asyncronous functions allows the code to run fast when extracting from many sub-directories.
 
 A use case for this tool is to extract download links for use with `wget` or `fsspec`.
 
