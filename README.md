@@ -1,39 +1,33 @@
 # Fast Link Extractor
-### Project under active deveopment, not production ready
+**Project under active deveopment**
 
 A Python 3.7+ package to extract links from a webpage. Asyncronous functions allows the code to run fast when extracting from many sub-directories.
 
 A use case for this tool is to extract download links for use with `wget` or `fsspec`.
 
-### Functions Implemented
-- `.link_extractor()`: top-level function to extract links from a URL.
+### Main base-level functions
+- `.link_extractor()`: extract links from a given URL
+- `.filter_with_regex()`: allows you to filter output with a regular expression
+- `.prepend_with_baseurl()`: allows the original URL to be pre-pended to each output
 
 # Installation
-
-
 ## PyPi
 ```sh
-pip install fast-link-extractor==0.1.0
+pip install fast-link-extractor
 ```
 
-## GitHub
-```sh
-pip install -e git+https://github.com/lgloege/fast-link-extractor.git#egg=fast-link-extractor
-```
-
-# Usage
-
+# Example
 Simply import the package and call `link_extractor()`. This will output of list of extracted links
 ```python
-import fast-link-extractor as fle
+import fast_link_extractor as fle
 
 # url to extract links from
-base_url = "https://lukegloege.com"
+base_url = "https://www.ncei.noaa.gov/data/sea-surface-temperature-optimum-interpolation/v2.1/access/avhrr/"
 
-# extract all links that end with .nc
+# extract all links from sub directories ending with .nc
+# this may take ~10 seconds, there are a lot of sub-directories
 links = fle.link_extractor(base_url, 
                            search_subs=True,
-                           prepend_base=True, 
                            regex='.nc$')
 ```
 

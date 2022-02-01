@@ -157,7 +157,7 @@ async def _gather_with_concurrency(n, *tasks):
     return await asyncio.gather(*(sem_task(task) for task in tasks))
 
 
-async def _async_link_extractor(base_url, search_subs=None, prepend_base_url=None, regex=None, *args, **kwargs):
+async def _async_link_extractor(base_url, search_subs=None, regex=None, *args, **kwargs):
     """ asyncronous extract links from url
 
     Parameters
@@ -190,14 +190,14 @@ async def _async_link_extractor(base_url, search_subs=None, prepend_base_url=Non
         files = filter_with_regex(files, regex)
         # files = [file for file in files if re.search(regex, file)]
 
-    if prepend_base_url:
-        files = prepend_with_baseurl(files, base_url)
-        # files = [base_url + file for file in files]
+    # if prepend_base_url:
+    #    files = prepend_with_baseurl(files, base_url)
+    #    # files = [base_url + file for file in files]
 
     return files
 
 
-def link_extractor(base_url, search_subs=None, prepend_base_url=None, regex=None, ipython=None, *args, **kwargs):
+def link_extractor(base_url, search_subs=None, regex=None, ipython=None, *args, **kwargs):
     """extract links from base_url
 
     to get output in jupyter you need to await the result first
@@ -220,11 +220,9 @@ def link_extractor(base_url, search_subs=None, prepend_base_url=None, regex=None
     if not ipython:
         return asyncio.run(_async_link_extractor(base_url=base_url,
                                                  search_subs=search_subs,
-                                                 prepend_base_url=prepend_base_url,
                                                  regex=regex))
     else:
         print(" ** this is a coroutine. await the result ** ")
         return _async_link_extractor(base_url=base_url,
                                      search_subs=search_subs,
-                                     prepend_base_url=prepend_base_url,
                                      regex=regex)
