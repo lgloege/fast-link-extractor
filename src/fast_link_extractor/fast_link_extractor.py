@@ -9,7 +9,7 @@ import re
 
 
 def _format_base_url(base_url: str):
-    """properly format a url
+    """properly format url to start with protocl and end with slash
 
     Args
     ------
@@ -17,7 +17,7 @@ def _format_base_url(base_url: str):
 
     Returns
     ------
-    str:
+    str: url with format `https://url/`
     """
     base_url = 'https://' + \
         base_url if not base_url.startswith(
@@ -32,6 +32,8 @@ async def _async_get_html(base_url: str, ssl: bool = None):
     Parameters
     ------
     base_url (str): the original URL supplied
+    ssl (str): SSL validation mode. default is False
+               if False then skip SSL certificate validation
 
     Returns
     ------
@@ -57,7 +59,7 @@ def _get_links(html_page: str):
     Returns
     ------
     list: list of all the links in the html document
-        these could be files or sub-directories
+          (these could be files or sub-directories)
     """
     # "lxml" supposed to be faster than "html.parser
     soup = BeautifulSoup(html_page, "html.parser")
@@ -75,7 +77,7 @@ def _get_sub_dirs(links: list, base_url: str):
     Parameters
     ------
     links (list): list of links, contains files and sub-directories
-    regex (str): filter links based on a regular expression
+    base_url (str): the original URL supplied
 
     Returns
     ------
@@ -90,7 +92,7 @@ def _get_files(links: list, regex: str = None):
 
     Parameters
     ------
-    links (list): list of links, contains files and sub-directories
+    links (list): list of links to files and sub-directories
     regex (str): filter links based on a regular expression
 
     Returns
@@ -139,6 +141,7 @@ async def _gather_with_concurrency(n: int, *tasks):
     Parameters
     ------
         n (int): number of files to open at once
+        tasks (list): list of tasks to gather output from
 
     Returns
     ------
@@ -157,7 +160,7 @@ async def _gather_with_concurrency(n: int, *tasks):
 
 
 async def _async_link_extractor(base_url: str, search_subs: bool = None, regex: str = None, *args, **kwargs):
-    """ asyncronous extract links from url
+    """asyncronous extract links from url
 
     Parameters
     ------
@@ -203,11 +206,18 @@ def link_extractor(base_url: str, search_subs: bool = None, regex: str = None, i
         base_url (str): URL you want to search
         seach_subs (bool): True is want to search sub-directories
         regex (str): filter links based on a regular expression
+        ipython (bool): whether you are using ipython or not
 
-    Parameters
+    Returns
     ------
         list: list of files
 
+    Example
+    ------
+    ```
+    url = 'https://www.ncei.noaa.gov/data/sea-surface-temperature-optimum-interpolation/v2.1/access/avhrr/'
+    links = await link_extractor(url, search_subs=True, regex='.nc$', ipython=True)
+    ```
     """
     if not ipython:
         return asyncio.run(_async_link_extractor(base_url=base_url,
