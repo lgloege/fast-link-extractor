@@ -181,13 +181,11 @@ async def _async_link_extractor(base_url: str, search_subs: bool = None, regex: 
     # gathers files from sub-directories
     if search_subs:
         coros = [_async_link_extractor(sub) for sub in sub_dirs]
-        # new_files = await asyncio.gather(*coros)
         new_files = await _gather_with_concurrency(200, *coros)
         files.extend(chain(*new_files))
 
     if regex is not None:
         files = _filter_with_regex(files, regex)
-        # files = [file for file in files if re.search(regex, file)]
 
     return files
 
