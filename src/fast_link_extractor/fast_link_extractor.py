@@ -8,7 +8,7 @@ import aiohttp
 import re
 
 
-def _format_base_url(base_url):
+def _format_base_url(base_url: str):
     """properly format a url
 
     Args
@@ -26,7 +26,7 @@ def _format_base_url(base_url):
     return base_url
 
 
-async def _async_get_html(base_url, ssl=None):
+async def _async_get_html(base_url: str, ssl: bool = None):
     """get html for a url
 
     Parameters
@@ -47,7 +47,7 @@ async def _async_get_html(base_url, ssl=None):
             return await resp.text() if (resp.status == 200) else ""
 
 
-def _get_links(html_page, base_url):
+def _get_links(html_page: str, base_url: str):
     """gets all links from html
 
     Parameters
@@ -70,7 +70,7 @@ def _get_links(html_page, base_url):
     return links
 
 
-def _get_sub_dirs(links, base_url):
+def _get_sub_dirs(links: list, base_url: str):
     """gets sub-directories from list of links
 
     Parameters
@@ -86,7 +86,7 @@ def _get_sub_dirs(links, base_url):
     return sub_dirs
 
 
-def _get_files(links, regex=None):
+def _get_files(links: list, regex: str = None):
     """gets files from list of links
 
     Parameters
@@ -104,7 +104,7 @@ def _get_files(links, regex=None):
     return file_links
 
 
-def _filter_with_regex(files, regex):
+def _filter_with_regex(files: list, regex: str):
     """filters files by regular expressions
 
     Parameters
@@ -119,7 +119,7 @@ def _filter_with_regex(files, regex):
     return [file for file in files if re.search(regex, file)]
 
 
-def _prepend_with_baseurl(files, base_url):
+def _prepend_with_baseurl(files: list, base_url: str):
     """prepend url to beginning of each file
 
     Parameters
@@ -134,7 +134,7 @@ def _prepend_with_baseurl(files, base_url):
     return [base_url + file for file in files]
 
 
-async def _gather_with_concurrency(n, *tasks):
+async def _gather_with_concurrency(n: int, *tasks):
     """Limits open files to avoid 'too many open files' error
 
     Parameters
@@ -157,7 +157,7 @@ async def _gather_with_concurrency(n, *tasks):
     return await asyncio.gather(*(sem_task(task) for task in tasks))
 
 
-async def _async_link_extractor(base_url, search_subs=None, regex=None, *args, **kwargs):
+async def _async_link_extractor(base_url: str, search_subs: bool = None, regex: str = None, *args, **kwargs):
     """ asyncronous extract links from url
 
     Parameters
@@ -193,7 +193,7 @@ async def _async_link_extractor(base_url, search_subs=None, regex=None, *args, *
     return files
 
 
-def link_extractor(base_url, search_subs=None, regex=None, ipython=None, *args, **kwargs):
+def link_extractor(base_url: str, search_subs: bool = None, regex: str = None, ipython: bool = None, *args, **kwargs):
     """extract links from base_url
 
     to get output in jupyter you need to await the result first
