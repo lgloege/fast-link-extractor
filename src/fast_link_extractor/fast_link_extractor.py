@@ -164,7 +164,6 @@ async def _async_link_extractor(base_url, search_subs=None, regex=None, *args, *
     ------
         base_url (str): URL you want to search
         seach_subs (bool): True is want to search sub-directories
-        prepend_base_url (bool): True is want to append the base url
         regex (str): filter links based on a regular expression
 
     Returns
@@ -176,7 +175,8 @@ async def _async_link_extractor(base_url, search_subs=None, regex=None, *args, *
     html_page = await async_get_html(base_url)
     links = get_links(html_page=html_page, base_url=base_url)
     sub_dirs = get_sub_dirs(links, base_url)
-    base_files = get_files(links, regex=regex)
+    filenames = get_files(links, regex=regex)
+    base_files = prepend_with_baseurl(filenames, base_url)
     files.extend(base_files)
 
     # gathers files from sub-directories
@@ -189,10 +189,6 @@ async def _async_link_extractor(base_url, search_subs=None, regex=None, *args, *
     if regex is not None:
         files = filter_with_regex(files, regex)
         # files = [file for file in files if re.search(regex, file)]
-
-    # if prepend_base_url:
-    #    files = prepend_with_baseurl(files, base_url)
-    #    # files = [base_url + file for file in files]
 
     return files
 
@@ -209,7 +205,6 @@ def link_extractor(base_url, search_subs=None, regex=None, ipython=None, *args, 
     ------
         base_url (str): URL you want to search
         seach_subs (bool): True is want to search sub-directories
-        prepend_base_url (bool): True is want to append the base url
         regex (str): filter links based on a regular expression
 
     Parameters
