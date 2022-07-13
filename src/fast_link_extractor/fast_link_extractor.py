@@ -47,13 +47,12 @@ async def _async_get_html(base_url: str, ssl: bool = None):
             return await resp.text() if (resp.status == 200) else ""
 
 
-def _get_links(html_page: str, base_url: str):
+def _get_links(html_page: str):
     """gets all links from html
 
     Parameters
     ------
     html_page (str): document html
-    base_url (str): the original URL supplied
 
     Returns
     ------
@@ -173,7 +172,7 @@ async def _async_link_extractor(base_url: str, search_subs: bool = None, regex: 
     files = []
     base_url = _format_base_url(base_url)
     html_page = await _async_get_html(base_url)
-    links = _get_links(html_page=html_page, base_url=base_url)
+    links = _get_links(html_page=html_page)
     sub_dirs = _get_sub_dirs(links, base_url)
     filenames = _get_files(links, regex=regex)
     base_files = _prepend_with_baseurl(filenames, base_url)
