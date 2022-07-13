@@ -17,7 +17,7 @@ def _format_base_url(base_url: str):
 
     Returns
     ------
-    str: url with format `https://url/`
+    str: url with format like `https://.../`
     """
     base_url = 'https://' + \
         base_url if not base_url.startswith(
@@ -105,34 +105,34 @@ def _get_files(links: list, regex: str = None):
     return file_links
 
 
-def _filter_with_regex(files: list, regex: str):
+def _filter_with_regex(links: list, regex: str):
     """filters files by regular expressions
 
     Parameters
     ------
-        files (list): list of files
+        links (list): list of links to files and sub-directories
         regex (str): regular expression string
 
     Returns
     ------
-        list: a list of files with regular expression applied
+        list: a list of links with regular expression applied
     """
-    return [file for file in files if re.search(regex, file)]
+    return [link for link in links if re.search(regex, link)]
 
 
-def _prepend_with_baseurl(files: list, base_url: str):
+def _prepend_with_baseurl(links: list, base_url: str):
     """prepend url to beginning of each file
 
     Parameters
     ------
-        files (list): list of files
+        links (list): list of links to files and sub-directories
         base_url (str): base url
 
     Returns
     ------
-        list: a list of files with base url pre-pended
+        list: a list of links with base url pre-pended
     """
-    return [base_url + file for file in files]
+    return [base_url + link for link in links]
 
 
 async def _gather_with_concurrency(n: int, *tasks):
