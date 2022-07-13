@@ -149,7 +149,10 @@ async def _gather_with_concurrency(n: int, *tasks):
 
     Notes
     ------
-        https://stackoverflow.com/questions/48483348/how-to-limit-concurrency-with-python-asyncio/61478547#61478547
+    ```
+    https://stackoverflow.com/questions/48483348/
+    how-to-limit-concurrency-with-python-asyncio/61478547#61478547
+    ```
     """
     semaphore = asyncio.Semaphore(n)
 
