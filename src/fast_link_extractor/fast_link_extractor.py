@@ -8,7 +8,7 @@ import aiohttp
 import re
 
 
-def format_base_url(base_url):
+def _format_base_url(base_url):
     """properly format a url
 
     Args
@@ -26,7 +26,7 @@ def format_base_url(base_url):
     return base_url
 
 
-async def async_get_html(base_url, ssl=None):
+async def _async_get_html(base_url, ssl=None):
     """get html for a url
 
     Parameters
@@ -47,7 +47,7 @@ async def async_get_html(base_url, ssl=None):
             return await resp.text() if (resp.status == 200) else ""
 
 
-def get_links(html_page, base_url):
+def _get_links(html_page, base_url):
     """gets all links from html
 
     Parameters
@@ -70,7 +70,7 @@ def get_links(html_page, base_url):
     return links
 
 
-def get_sub_dirs(links, base_url):
+def _get_sub_dirs(links, base_url):
     """gets sub-directories from list of links
 
     Parameters
@@ -86,7 +86,7 @@ def get_sub_dirs(links, base_url):
     return sub_dirs
 
 
-def get_files(links, regex=None):
+def _get_files(links, regex=None):
     """gets files from list of links
 
     Parameters
@@ -104,7 +104,7 @@ def get_files(links, regex=None):
     return file_links
 
 
-def filter_with_regex(files, regex):
+def _filter_with_regex(files, regex):
     """filters files by regular expressions
 
     Parameters
@@ -119,7 +119,7 @@ def filter_with_regex(files, regex):
     return [file for file in files if re.search(regex, file)]
 
 
-def prepend_with_baseurl(files, base_url):
+def _prepend_with_baseurl(files, base_url):
     """prepend url to beginning of each file
 
     Parameters
@@ -171,12 +171,12 @@ async def _async_link_extractor(base_url, search_subs=None, regex=None, *args, *
         list: list of files
     """
     files = []
-    base_url = format_base_url(base_url)
-    html_page = await async_get_html(base_url)
-    links = get_links(html_page=html_page, base_url=base_url)
-    sub_dirs = get_sub_dirs(links, base_url)
-    filenames = get_files(links, regex=regex)
-    base_files = prepend_with_baseurl(filenames, base_url)
+    base_url = _format_base_url(base_url)
+    html_page = await _async_get_html(base_url)
+    links = _get_links(html_page=html_page, base_url=base_url)
+    sub_dirs = _get_sub_dirs(links, base_url)
+    filenames = _get_files(links, regex=regex)
+    base_files = _prepend_with_baseurl(filenames, base_url)
     files.extend(base_files)
 
     # gathers files from sub-directories
@@ -187,7 +187,7 @@ async def _async_link_extractor(base_url, search_subs=None, regex=None, *args, *
         files.extend(chain(*new_files))
 
     if regex is not None:
-        files = filter_with_regex(files, regex)
+        files = _filter_with_regex(files, regex)
         # files = [file for file in files if re.search(regex, file)]
 
     return files
