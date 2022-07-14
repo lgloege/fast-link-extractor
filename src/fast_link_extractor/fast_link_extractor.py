@@ -196,7 +196,7 @@ async def _async_link_extractor(base_url: str, search_subs: bool = None, regex: 
     return files
 
 
-def link_extractor(base_url: str, search_subs: bool = None, regex: str = None, ipython: bool = None, *args, **kwargs):
+def link_extractor(base_url: str = None, search_subs: bool = None, regex: str = None, ipython: bool = None, *args, **kwargs):
     """extract links from base_url
 
     to get output in jupyter you need to await the result first
@@ -207,9 +207,12 @@ def link_extractor(base_url: str, search_subs: bool = None, regex: str = None, i
     Parameters
     ------
         base_url (str): URL you want to search
-        seach_subs (bool): True is want to search sub-directories
-        regex (str): filter links based on a regular expression
+        seach_subs (bool): True is want to search sub-directories 
+            (default is True)
+        regex (str): filter links based on a regular expression 
+            (default is '.')
         ipython (bool): whether you are using ipython or not
+            (default is False)
 
     Returns
     ------
@@ -222,6 +225,24 @@ def link_extractor(base_url: str, search_subs: bool = None, regex: str = None, i
     links = await link_extractor(url, search_subs=True, regex='.nc$', ipython=True)
     ```
     """
+    # set default parameters
+    search_subs = True if search_subs is None else search_subs
+    ipython = False if ipython is None else ipython
+    regex = '.' if regex is None else regex
+
+    # ensure type is correct
+    if not isinstance(base_url, str):
+        raise TypeError('Argument for base_url must be a string')
+
+    if not isinstance(search_subs, bool):
+        raise TypeError('Argument for search_subs must be a bool')
+
+    if not isinstance(regex, str):
+        raise TypeError('Argument for regex must be a string')
+
+    if not isinstance(ipython, bool):
+        raise TypeError('Argument for ipython must be a bool')
+
     if not ipython:
         return asyncio.run(_async_link_extractor(base_url=base_url,
                                                  search_subs=search_subs,
