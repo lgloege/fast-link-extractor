@@ -196,7 +196,12 @@ async def _async_link_extractor(base_url: str, search_subs: bool = None, regex: 
     return files
 
 
-def link_extractor(base_url: str = None, search_subs: bool = None, regex: str = None, ipython: bool = None, *args, **kwargs):
+def link_extractor(base_url: str = None,
+                   search_subs: bool = None,
+                   regex: str = None,
+                   ipython: bool = None,
+                   no_warning: bool = None,
+                   *args, **kwargs):
     """extract links from base_url
 
     to get output in jupyter you need to await the result first
@@ -213,6 +218,8 @@ def link_extractor(base_url: str = None, search_subs: bool = None, regex: str = 
             (default is '.')
         ipython (bool): whether you are using ipython or not
             (default is False)
+        no_warning (bool): toggles on/off the await warning message
+            (default is False, only applies to ipython=True)
 
     Returns
     ------
@@ -229,6 +236,7 @@ def link_extractor(base_url: str = None, search_subs: bool = None, regex: str = 
     search_subs = True if search_subs is None else search_subs
     ipython = False if ipython is None else ipython
     regex = '.' if regex is None else regex
+    no_warning = False if no_warning is None else no_warning
 
     # ensure type is correct
     if not isinstance(base_url, str):
@@ -243,12 +251,22 @@ def link_extractor(base_url: str = None, search_subs: bool = None, regex: str = 
     if not isinstance(ipython, bool):
         raise TypeError('Argument for ipython must be a bool')
 
+    warning_message = """ 
+    ======================================================
+    This is a coroutine. Make sure to `await` the function
+        
+        links = await link_extractor(url, ...)
+        
+    no_warning=True will suppress this warning 
+    ======================================================
+    """
+
     if not ipython:
         return asyncio.run(_async_link_extractor(base_url=base_url,
                                                  search_subs=search_subs,
                                                  regex=regex))
     else:
-        print(" ** this is a coroutine. await the result ** ")
+        None if no_warning else print(f'{warning_message}')
         return _async_link_extractor(base_url=base_url,
                                      search_subs=search_subs,
                                      regex=regex)
