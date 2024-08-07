@@ -202,35 +202,37 @@ def link_extractor(base_url: str = None,
                    ipython: bool = None,
                    no_warning: bool = None,
                    *args, **kwargs):
-    """extract links from base_url
-
+    """Extract links from base_url.
     to get output in jupyter you need to await the result first
-        ```
-        links = await link_extractor(*args)
-        ```
+
+    >>> links = await link_extractor(*args)
 
     Parameters
-    ------
-        base_url (str): URL you want to search
-        seach_subs (bool): True is want to search sub-directories 
-            (default is True)
-        regex (str): filter links based on a regular expression 
-            (default is '.')
-        ipython (bool): whether you are using ipython or not
-            (default is False)
-        no_warning (bool): toggles on/off the await warning message
-            (default is False, only applies to ipython=True)
+    ----------
+    base_url : str
+        URL you want to search
+    seach_subs :bool
+        True is want to search sub-directories
+        (default is True)
+    regex : str
+        filter links based on a regular expression
+        (default is '.')
+    ipython : bool
+        whether you are using ipython or not
+        (default is False)
+    no_warning : bool
+        toggles on/off the await warning message
+        (default is False, only applies to ipython=True)
 
     Returns
-    ------
-        list: list of files
+    -------
+    list :
+        list of files
 
     Example
-    ------
-    ```
-    url = 'https://www.ncei.noaa.gov/data/sea-surface-temperature-optimum-interpolation/v2.1/access/avhrr/'
-    links = await link_extractor(url, search_subs=True, regex='.nc$', ipython=True)
-    ```
+    -------
+    >>> url = 'https://www.ncei.noaa.gov/data/sea-surface-temperature-optimum-interpolation/v2.1/access/avhrr/'
+    >>> links = await link_extractor(url, search_subs=True, regex='.nc$', ipython=True)
     """
     # set default parameters
     search_subs = True if search_subs is None else search_subs
@@ -251,13 +253,13 @@ def link_extractor(base_url: str = None,
     if not isinstance(ipython, bool):
         raise TypeError('Argument for ipython must be a bool')
 
-    warning_message = """ 
+    warning_message = """
     ======================================================
     This is a coroutine. Make sure to `await` the function
-        
+
         links = await link_extractor(url, ...)
-        
-    no_warning=True will suppress this warning 
+
+    no_warning=True will suppress this warning
     ======================================================
     """
 
