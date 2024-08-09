@@ -2,6 +2,45 @@
 requires = ["setuptools>=42.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "fast_link_extractor"
+version = "1.0.0"
+description = "quickly extract links from html"
+readme = "README.md"
+requires-python = ">=3.7"
+license ={text = "MIT"}
+authors = [
+    {name = "Luke Gloege", email = "lukegloege@gmail.com"}
+]
+classifiers =[
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering",
+]
+dependencies = [
+    "aiohttp==3.8.1",
+    "beautifulsoup4==4.10.0",
+    "bs4==0.0.1",
+    "lxml==4.6.3",
+    "pytest>=6.0",
+    "pytest-cov>=2.0",
+    "mypy>=0.910",
+    "flake8>=3.9",
+    "tox>=3.24",
+]
+
+[tool.setuptool]
+packages = ["fast_link_extractor"]
+
 [tool.pytest.ini_options]
 addopts = "--cov=fast-link-extractor"
 testpaths = [
