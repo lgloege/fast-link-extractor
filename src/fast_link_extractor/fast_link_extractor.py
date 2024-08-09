@@ -1,23 +1,24 @@
-"""fast_link_extractor
-a program to quickly extract links from a url
-"""
-from bs4 import BeautifulSoup
-from itertools import chain
+"""A program to quickly extract links from a url"""
+
 import asyncio
-import aiohttp
+from itertools import chain
 import re
 
+from bs4 import BeautifulSoup
+import aiohttp
 
 def _format_base_url(base_url: str):
-    """properly format url to start with protocl and end with slash
+    """Properly format URL to start with protocol and end with slash.
 
-    Args
-    ------
-    base_url (str): the original URL supplied
+    Parameters
+    ---------
+    base_url : str
+        the original URL supplied
 
     Returns
-    ------
-    str: url with format like `https://.../`
+    -------
+    str :
+        url with format like `https://.../`
     """
     base_url = 'https://' + \
         base_url if not base_url.startswith(
@@ -27,17 +28,20 @@ def _format_base_url(base_url: str):
 
 
 async def _async_get_html(base_url: str, ssl: bool = None):
-    """get html for a url
+    """Get HTML for a url.
 
     Parameters
-    ------
-    base_url (str): the original URL supplied
-    ssl (str): SSL validation mode. default is False
-               if False then skip SSL certificate validation
+    ----------
+    base_url : str
+        the original URL supplied
+    ssl : str
+        SSL validation mode. default is False
+        if False then skip SSL certificate validation
 
     Returns
-    ------
-    str: html for base_url
+    -------
+    str :
+        HTML for base_url
     """
     if ssl is None:
         ssl = False
@@ -50,16 +54,18 @@ async def _async_get_html(base_url: str, ssl: bool = None):
 
 
 def _get_links(html_page: str):
-    """gets all links from html
+    """Tets all links from HTML.
 
     Parameters
-    ------
-    html_page (str): document html
+    ----------
+    html_page : str)
+        document html
 
     Returns
-    ------
-    list: list of all the links in the html document
-          (these could be files or sub-directories)
+    -------
+    list :
+        list of all the links in the html document
+        (these could be files or sub-directories)
     """
     # "lxml" supposed to be faster than "html.parser
     soup = BeautifulSoup(html_page, "html.parser")
@@ -72,32 +78,38 @@ def _get_links(html_page: str):
 
 
 def _get_sub_dirs(links: list, base_url: str):
-    """gets sub-directories from list of links
+    """Gets sub-directories from list of links.
 
     Parameters
-    ------
-    links (list): list of links, contains files and sub-directories
-    base_url (str): the original URL supplied
+    ----------
+    links : list
+        list of links, contains files and sub-directories
+    base_url : str
+        the original URL supplied
 
     Returns
-    ------
-    list: only the links that point to sub-directories are returned
+    -------
+    list :
+        only the links that point to sub-directories are returned
     """
     sub_dirs = [f"{base_url}{link}" for link in links if re.search(r'/$', link)]
     return sub_dirs
 
 
 def _get_files(links: list, regex: str = None):
-    """gets files from list of links
+    """Gets files from list of links.
 
     Parameters
-    ------
-    links (list): list of links to files and sub-directories
-    regex (str): filter links based on a regular expression
+    ----------
+    links : list
+        list of links to files and sub-directories
+    regex : str
+        filter links based on a regular expression
 
     Returns
-    ------
-    list: only the links that point to files are returned
+    -------
+    list :
+        only the links that point to files are returned
     """
     if regex is None:
         regex = r'[^/]$'
@@ -106,16 +118,19 @@ def _get_files(links: list, regex: str = None):
 
 
 def _filter_with_regex(links: list, regex: str):
-    """filters files by regular expressions
+    """Filters files by regular expressions.
 
     Parameters
-    ------
-        links (list): list of links to files and sub-directories
-        regex (str): regular expression string
+    ----------
+    links : list
+        list of links to files and sub-directories
+    regex : str
+        regular expression string
 
     Returns
-    ------
-        list: a list of links with regular expression applied
+    -------
+    list :
+        a list of links with regular expression applied
     """
     return [link for link in links if re.search(regex, link)]
 
@@ -124,35 +139,38 @@ def _prepend_with_baseurl(links: list, base_url: str):
     """prepend url to beginning of each file
 
     Parameters
-    ------
-        links (list): list of links to files and sub-directories
-        base_url (str): base url
+    ----------
+    links : list
+        list of links to files and sub-directories
+    base_url : str
+        base url
 
     Returns
     ------
-        list: a list of links with base url pre-pended
+    list :
+        a list of links with base url pre-pended
     """
     return [base_url + link for link in links]
 
 
 async def _gather_with_concurrency(n: int, *tasks):
-    """Limits open files to avoid 'too many open files' error
+    """Limits open files to avoid 'too many open files' error.
 
     Parameters
-    ------
-        n (int): number of files to open at once
-        tasks (list): list of tasks to gather output from
+    ----------
+    n : int
+        Number of files to open at once
+    tasks : list
+        list of tasks to gather output from
 
     Returns
-    ------
-        awaitable: gathered coroutines that need to awaited
+    -------
+    awaitable :
+        gathered coroutines that need to awaited
 
     Notes
-    ------
-    ```
-    https://stackoverflow.com/questions/48483348/
-    how-to-limit-concurrency-with-python-asyncio/61478547#61478547
-    ```
+    -----
+    https://stackoverflow.com/questions/48483348/how-to-limit-concurrency-with-python-asyncio/61478547#61478547
     """
     semaphore = asyncio.Semaphore(n)
 
@@ -163,17 +181,21 @@ async def _gather_with_concurrency(n: int, *tasks):
 
 
 async def _async_link_extractor(base_url: str, search_subs: bool = None, regex: str = None, *args, **kwargs):
-    """asyncronous extract links from url
+    """Asyncronous extract links from URL.
 
     Parameters
-    ------
-        base_url (str): URL you want to search
-        seach_subs (bool): True is want to search sub-directories
-        regex (str): filter links based on a regular expression
+    ----------
+    base_url : str
+        URL you want to search
+    seach_subs : bool
+        True is want to search sub-directories
+    regex :str
+        filter links based on a regular expression
 
     Returns
-    ------
-        list: list of files
+    -------
+    list :
+        list of files
     """
     files = []
     base_url = _format_base_url(base_url)
@@ -203,6 +225,7 @@ def link_extractor(base_url: str = None,
                    no_warning: bool = None,
                    *args, **kwargs):
     """Extract links from base_url.
+
     to get output in jupyter you need to await the result first
 
     >>> links = await link_extractor(*args)
